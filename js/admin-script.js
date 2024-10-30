@@ -32,10 +32,36 @@ jQuery(document).ready(function($) {
         })
     }
 
+    function affh_save_settings(formValue){
+       // Example AJAX call with success and failure handling
+        console.log(formValue);
+        $.post(affhadmindata.ajax_url, {
+            action: 'affh_save_settings',
+            data:formValue,
+            nonce:affhadmindata.nonce
+        })
+        .done(function(response) {
+            if (response.success) {
+              $("#template-content").html(response.data.template_data);
+            } else {
+                // Handle the case where the response is successful but there is an error (e.g., custom error message)
+                console.log('Error:', response.message || 'Unknown error');
+            }
+        })
+    }
+
     $('.radio-button').change(function() {
         var selectedValue = $(this).val();
         affh_settings(selectedValue);
     });
 
-
+    $('.affiliate-form').on('submit', function(event) {
+        event.preventDefault(); // Prevent default form submission
+        const formData = $(this).serializeArray();
+        const formValue = {};
+        $.each(formData, function(_, field) {
+            formValue[field.name] = field.value;
+        });
+        affh_save_settings(formValue);
+    })
 });

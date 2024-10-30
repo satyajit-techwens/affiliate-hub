@@ -19,6 +19,7 @@
 
     </div>
             <div id="template-content"> </div>
+            <div class="form-action"> </div>
 
-    <button type="button" class="submit-button">Save</button>
+    <button type="submit" class="submit-button">Save</button>
 </form>

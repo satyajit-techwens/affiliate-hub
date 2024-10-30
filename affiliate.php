@@ -108,12 +108,11 @@ class AFFH_INIT{
         $charset_collate = $wpdb->get_charset_collate();
 
         $sql = "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}affiliate` (
-          id varchar(191) NOT NULL,
+          id bigint(20) NOT NULL AUTO_INCREMENT,
           affiliate_name varchar(191) NOT NULL,
           user_id bigint(20) UNSIGNED NOT NULL,
           affiliate_data varchar(256) NOT NULL,
           created_at datetime NOT NULL,
-          expires_at datetime NOT NULL,
           PRIMARY KEY  (id)
         ) $charset_collate;";
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');

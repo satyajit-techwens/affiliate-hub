@@ -15,6 +15,9 @@
 	        add_action("wp_ajax_affh_settings_by_provider",array($this,"affh_settings_by_provider"));
 	        add_action("wp_ajax_norpiv_affh_settings_by_provider",array($this,"affh_settings_by_provider"));
 	        add_filter("affh_provider_settings_form",array($this,"affh_provider_settings_form"));
+	        add_action("wp_ajax_affh_save_settings",array($this,"affh_save_settings"));
+	        add_action("wp_ajax_norpiv_affh_save_settings",array($this,"affh_save_settings"));
+
 	    }
 
 	    public function affh_admin_menu() {
@@ -66,6 +69,47 @@
 	    	        ob_start();
 	   					require_once AFFH_SETTINGS_PATH.$provider;
 	   				return ob_get_clean(); // Returns the HTML content of the included file
+	    }
+
+	   	public function affh_save_settings(){
+	   			global $wpdb;
+	   			$table_name = $wpdb->prefix . 'affiliate';
+
+	    	 	if (isset($_POST['data']) && is_array($_POST['data'])) {
+	    	 		$settings_data = array_map('sanitize_text_field', wp_unslash($_POST['data']));
+
+			    }
+			        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'my_nonce_action')) {
+			    		$err_msg = (!check_ajax_referer('update_settings_validation', 'nonce', false))?'Invalid nonce. Please refresh the page and try again.':'nonce verified';
+			    	    $err_msg = empty($err_msg)?empty($formdata)?'Select an option.':'':'';
+			    	}
+
+				
+			    	$current_user_id = get_current_user_id();
+			    	$option = $settings_data['option'];
+			    	unset($settings_data['option']);
+			    	$insertdata = array(
+			    		'affiliate_name' => $option,
+			    		'user_id' => $current_user_id,
+			    		'affiliate_data' => maybe_serialize($settings_data),
+			    		'created_at' => current_time('mysql')
+			    	);
+					$inserted = $wpdb->insert($table_name, $insertdata);
+
+					if ($inserted) {
+					    $msg = 'Data successfully inserted.';
+					    wp_send_json_success($msg);
+					} else {
+					    $msg = 'Failed to insert data.';
+					    wp_send_json_error($msg);
+
+					}
+
+				wp_die();
+	    }
+
+	    public function affh_nonce_verification(){
+
 	    }
 	}
 
