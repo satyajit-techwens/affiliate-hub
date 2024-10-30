@@ -54,7 +54,6 @@
 		            	'data' => $err_msg
 		        	));
 	    	    }else{
-	    	    	$provider = $provider.".php";
 	    	    	$form_template = apply_filters("affh_provider_settings_form",$provider);
 	    	    	wp_send_json_success(array(
 		            	'template_data' => $form_template
@@ -67,6 +66,9 @@
 
 	    public function affh_provider_settings_form($provider){
 	    	        ob_start();
+	    	        	$results = $this->affh_get_credentails($provider);
+	    	        	$credentials = maybe_unserialize($results[0]->affiliate_data);
+	    	    		$provider = $provider.".php";
 	   					require_once AFFH_SETTINGS_PATH.$provider;
 	   				return ob_get_clean(); // Returns the HTML content of the included file
 	    }
@@ -106,6 +108,24 @@
 					}
 
 				wp_die();
+	    }
+
+	    public function affh_get_credentails($affiliate_name){
+	    	global $wpdb;
+
+			$table_name = $wpdb->prefix . 'affiliate'; // Replace with your actual table name
+
+			// Prepare and execute the query
+			$results = $wpdb->get_results(
+			    $wpdb->prepare(
+			        "SELECT affiliate_data FROM $table_name WHERE affiliate_name = %s",
+			        $affiliate_name
+			    )
+			);
+
+			if(!empty($results)){
+				return $results;
+			}
 	    }
 
 	    public function affh_nonce_verification(){
