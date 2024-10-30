@@ -61,6 +61,7 @@ if ( ! defined( 'AFFH_SETTINGS_PATH' ) ) {
 
 class AFFH_INIT{
     public function __construct(){
+        add_action("affh_create_table",array($this,"affh_create_table"));
         register_activation_hook(__FILE__, array($this, 'affh_activate'));
         register_deactivation_hook(__FILE__, array($this, 'affh_deactivate'));
         add_action("admin_enqueue_scripts", array($this, 'affh_scripts'));
@@ -70,34 +71,54 @@ class AFFH_INIT{
     }
 
     public function affh_activate(){
+        do_action("affh_create_table");
     }
 
     public function affh_deactivate(){
+
     }
 
     public function affh_scripts(){
           // Enqueue CSS
-    wp_enqueue_style(
-        'affh-admin-style', // Handle
-        AFFH_CSS_URI . 'admin-style.css', // Path to CSS file
-        array(), // Dependencies
-        '1.0' // Version
-    );
+        wp_enqueue_style(
+            'affh-admin-style', // Handle
+            AFFH_CSS_URI . 'admin-style.css', // Path to CSS file
+            array(), // Dependencies
+            '1.0' // Version
+        );
 
-    // Enqueue JS
-    wp_enqueue_script(
-        'affh-admin-script', // Handle
-        AFFH_JS_URI . 'admin-script.js', // Path to JS file
-        array('jquery'), // Dependencies (if any)
-        '1.0', // Version
-        true // Load in footer
-    );
+        // Enqueue JS
+        wp_enqueue_script(
+            'affh-admin-script', // Handle
+            AFFH_JS_URI . 'admin-script.js', // Path to JS file
+            array('jquery'), // Dependencies (if any)
+            '1.0', // Version
+            true // Load in footer
+        );
 
-    wp_localize_script('affh-admin-script', 'affhadmindata', array(
-        'ajax_url' => admin_url('admin-ajax.php'), // Useful for AJAX calls
-        'nonce' =>  wp_create_nonce( 'update_settings_validation' )
-    ));
+        wp_localize_script('affh-admin-script', 'affhadmindata', array(
+            'ajax_url' => admin_url('admin-ajax.php'), // Useful for AJAX calls
+            'nonce' =>  wp_create_nonce( 'update_settings_validation' )
+        ));
+    }
 
+    public function affh_create_table(){
+        global $wpdb;
+
+        $charset_collate = $wpdb->get_charset_collate();
+
+        $sql = "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}affiliate` (
+          id varchar(191) NOT NULL,
+          affiliate_name varchar(191) NOT NULL,
+          user_id bigint(20) UNSIGNED NOT NULL,
+          affiliate_data varchar(256) NOT NULL,
+          created_at datetime NOT NULL,
+          expires_at datetime NOT NULL,
+          PRIMARY KEY  (id)
+        ) $charset_collate;";
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
+        $success = empty($wpdb->last_error);
     }
 }
 

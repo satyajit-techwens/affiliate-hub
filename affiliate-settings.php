@@ -3,11 +3,11 @@
 	if ( ! defined( 'ABSPATH' ) ) {
     	exit; // Exit if accessed directly
 	}
-// Report all PHP errors
-error_reporting(E_ALL);
+// // Report all PHP errors
+// error_reporting(E_ALL);
 
-// Report all PHP errors
-error_reporting(-1);
+// // Report all PHP errors
+// error_reporting(-1);
 	class AFFH_SETTINGS{
 	    public function __construct(){
 
@@ -38,9 +38,13 @@ error_reporting(-1);
 	    }
 
 	    public function affh_settings_by_provider(){
-	    		$provider = $_POST['data'];
-	    		$err_msg = (!check_ajax_referer('update_settings_validation', 'nonce', false))?'Invalid nonce. Please refresh the page and try again.':'nonce verified';
-	    	    $err_msg = empty($err_msg)?empty($provider)?'Select an option.':'':'';
+	    	 	if (isset($_POST['data'])) {
+	    	 		$provider = sanitize_text_field(wp_unslash($_POST['data']));
+			    }
+			        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'my_nonce_action')) {
+			    		$err_msg = (!check_ajax_referer('update_settings_validation', 'nonce', false))?'Invalid nonce. Please refresh the page and try again.':'nonce verified';
+			    	    $err_msg = empty($err_msg)?empty($provider)?'Select an option.':'':'';
+			    	}
 
 	    	    if($err_msg){
 	    	    	wp_send_json_error(array(

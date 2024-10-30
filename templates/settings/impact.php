@@ -1,3 +1,5 @@
+<?php
+?>
     <label for="account_id">Account ID:</label>
     <input type="text" id="account_id" name="account_id" required>
 
