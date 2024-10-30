@@ -12,7 +12,7 @@
 	    }
 
 	   	public function affh_page($file){
-	   		require AFFH_TEMPLATE_PATH.$file;
+	   			require_once AFFH_TEMPLATE_PATH.$file;
 	   	}
 	}
 

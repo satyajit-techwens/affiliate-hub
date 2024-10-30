@@ -8,7 +8,7 @@ Author:       Satyajit Ghosh
 Author URI:   https://techwens.com/
 License:      GPL2
 License URI:  https://www.gnu.org/licenses/gpl-2.0.html
-Text Domain:  affh
+Text Domain:  affiliate-hub
 */
 
 
@@ -47,11 +47,14 @@ if ( ! defined( 'AFFH_TEMPLATES_PATH' ) ) {
 }
 
 if ( ! defined( 'AFFH_TEMPLATE_PATH' ) ) {
-    define( 'AFFH_TEMPLATE_PATH', AFFH_PATH . 'templates/template/' );
+    define( 'AFFH_TEMPLATE_PATH', AFFH_TEMPLATES_PATH . 'template/' );
 }
 
 if ( ! defined( 'AFFH_IMAGES_PATH' ) ) {
     define( 'AFFH_IMAGES_PATH', AFFH_URI . 'images/' );
+}
+if ( ! defined( 'AFFH_SETTINGS_PATH' ) ) {
+    define( 'AFFH_SETTINGS_PATH', AFFH_TEMPLATES_PATH . 'settings/' );
 }
 
 
@@ -63,6 +66,7 @@ class AFFH_INIT{
         add_action("admin_enqueue_scripts", array($this, 'affh_scripts'));
 
         require_once AFFH_PATH.'affiliate-callback.php';
+
     }
 
     public function affh_activate(){
@@ -88,6 +92,12 @@ class AFFH_INIT{
         '1.0', // Version
         true // Load in footer
     );
+
+    wp_localize_script('affh-admin-script', 'affhadmindata', array(
+        'ajax_url' => admin_url('admin-ajax.php'), // Useful for AJAX calls
+        'nonce' =>  wp_create_nonce( 'update_settings_validation' )
+    ));
+
     }
 }
 
