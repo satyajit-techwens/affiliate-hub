@@ -3,7 +3,7 @@
 Plugin Name:  Affiliate Hub
 Plugin URI:   https://techwens.com/
 Description:  An affiliate plugin enhances your website by simplifying affiliate link management, tracking conversions, and optimizing commissions for 					better revenue generation.
-Version:      1.0
+Version:      1.0.0
 Author:       Satyajit Ghosh
 Author URI:   https://techwens.com/
 License:      GPL2
@@ -60,7 +60,7 @@ if ( ! defined( 'AFFH_SETTINGS_PATH' ) ) {
 
 
 class AFFH_INIT{
-    public function __construct(){
+    public function __construct() {
         add_action("affh_create_table",array($this,"affh_create_table"));
         register_activation_hook(__FILE__, array($this, 'affh_activate'));
         register_deactivation_hook(__FILE__, array($this, 'affh_deactivate'));
@@ -70,15 +70,15 @@ class AFFH_INIT{
 
     }
 
-    public function affh_activate(){
+    public function affh_activate() {
         do_action("affh_create_table");
     }
 
-    public function affh_deactivate(){
+    public function affh_deactivate() {
 
     }
 
-    public function affh_scripts(){
+    public function affh_scripts() {
           // Enqueue CSS
         wp_enqueue_style(
             'affh-admin-style', // Handle
@@ -102,7 +102,7 @@ class AFFH_INIT{
         ));
     }
 
-    public function affh_create_table(){
+    public function affh_create_table() {
         global $wpdb;
 
         $charset_collate = $wpdb->get_charset_collate();
